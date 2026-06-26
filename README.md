@@ -10,6 +10,14 @@ behaviour-based personalization.
 > features live in [ROADMAP.md](ROADMAP.md); an honest feature-by-feature breakdown is in
 > [dev/demo/AUDIT.md](dev/demo/AUDIT.md).
 
+## Status
+
+Productization phases 0–4 are implemented and **unit-tested** (128 unit + 3 integration tests,
+phpcs-clean on all new code). The pluggable vector store and the never-empty fallback are wired
+into the live serving path (`RecommendationService`). Items that require a running stack — admin
+analytics dashboard UI + JS beacon, GDPR export/erase framework wiring, and all live-environment
+gate evidence (Luma indexing, hit-rate, CI-green-on-PR) — are listed in [ROADMAP.md](ROADMAP.md).
+
 ## What it does
 
 - **Semantic related / cross-sell / up-sell** via nearest-neighbour search over product
