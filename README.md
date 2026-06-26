@@ -1,5 +1,7 @@
 # NavinDBhudiya_ProductRecommendation
 
+[![CI](https://github.com/navindbhudiya/magento2-product-recommendation/actions/workflows/ci.yml/badge.svg)](https://github.com/navindbhudiya/magento2-product-recommendation/actions/workflows/ci.yml)
+
 AI-powered product recommendations for Magento 2 — semantic *related*, *cross-sell*, and
 *up-sell* suggestions driven by vector embeddings, with optional LLM re-ranking and
 behaviour-based personalization.
