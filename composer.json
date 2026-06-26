@@ -70,6 +70,18 @@
             "NavinDBhudiya\\ProductRecommendation\\Test\\": "Test/"
         }
     },
+    "scripts": {
+        "test": "bash dev/demo/run-tests.sh",
+        "test:unit": "bash dev/demo/run-tests.sh --unit",
+        "test:integration": "bash dev/demo/run-tests.sh --integration",
+        "phpcs": "bash dev/demo/run-tests.sh --phpcs"
+    },
+    "scripts-descriptions": {
+        "test": "Run unit + integration tests and phpcs (no Warden required).",
+        "test:unit": "Run the PHPUnit unit suite only.",
+        "test:integration": "Run the integration smoke suite only.",
+        "phpcs": "Run PHP_CodeSniffer with the Magento2 ruleset."
+    },
     "minimum-stability": "stable",
     "prefer-stable": true,
     "config": {

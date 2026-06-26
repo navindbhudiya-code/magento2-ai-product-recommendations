@@ -77,7 +77,12 @@ Use `dev/demo/run-tests.sh`. With it, the suite runs green.
 ## phpcs debt
 
 `magento/magento-coding-standard` (Magento2 ruleset) — see `phpcs.xml` and `composer phpcs`.
-**Recorded debt:** _captured in commit `test: harness` after the first run; do not fix in Phase 0._
+
+**Recorded debt (baseline, do NOT fix in Phase 0):**
+`A TOTAL OF 17 ERRORS AND 122 WARNINGS WERE FOUND IN 37 FILES` — 46 auto-fixable via `phpcbf`.
+Heaviest files: `Service/LlmReRanker.php` (18), `Service/DiversityFilter.php` (10),
+`Service/RecommendationExplainer.php` (9), `Service/TrendingBooster.php` (9). Captured with
+`bash dev/demo/run-tests.sh --phpcs` on PHP 8.4.10. Cleanup is deferred to Phase 3 (CI gate).
 
 ## Baseline metrics (Phase 0.5)
 

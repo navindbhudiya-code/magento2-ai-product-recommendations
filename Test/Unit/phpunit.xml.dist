@@ -3,23 +3,24 @@
 /**
  * NavinDBhudiya ProductRecommendation
  *
- * @category  NavinDBhudiya
- * @package   NavinDBhudiya_ProductRecommendation
- * @author    Navin Bhudiya
- * @license   MIT License
+ * Unit test suite. Run via dev/demo/run-tests.sh (which uses dev/demo/phpunit-launcher.php
+ * to work around the host's PHPUnit 10 / Magento exclude-from-classmap incompatibility).
+ *
+ * @license MIT License
  */
 -->
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.5/phpunit.xsd"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd"
+         bootstrap="bootstrap.php"
          colors="true"
-         columns="max"
+         cacheDirectory=".phpunit.cache"
          beStrictAboutTestsThatDoNotTestAnything="false">
     <testsuites>
         <testsuite name="NavinDBhudiya_ProductRecommendation_Unit_Tests">
             <directory>./</directory>
         </testsuite>
     </testsuites>
-    <coverage>
+    <source>
         <include>
             <directory suffix=".php">../../Helper</directory>
             <directory suffix=".php">../../Service</directory>
@@ -33,7 +34,7 @@
             <directory>../../Test</directory>
             <directory>../../Setup</directory>
         </exclude>
-    </coverage>
+    </source>
     <php>
         <ini name="date.timezone" value="America/Los_Angeles"/>
         <ini name="xdebug.max_nesting_level" value="200"/>

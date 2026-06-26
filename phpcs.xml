@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * NavinDBhudiya ProductRecommendation
+ *
+ * PHP_CodeSniffer configuration using the Magento2 coding standard.
+ * Run: bash dev/demo/run-tests.sh --phpcs   (or composer phpcs)
+ *
+ * @license MIT License
+ */
+-->
+<ruleset name="NavinDBhudiya_ProductRecommendation">
+    <description>Magento2 coding standard for NavinDBhudiya_ProductRecommendation.</description>
+
+    <arg name="extensions" value="php"/>
+    <arg name="colors"/>
+    <arg value="sp"/>
+
+    <!-- Scan the module; skip vendored/generated and non-PHP assets. -->
+    <file>.</file>
+    <exclude-pattern>*/docker/*</exclude-pattern>
+    <exclude-pattern>*/dev/demo/*</exclude-pattern>
+    <exclude-pattern>*/view/*</exclude-pattern>
+    <exclude-pattern>*/.phpunit.cache/*</exclude-pattern>
+
+    <rule ref="Magento2"/>
+</ruleset>
