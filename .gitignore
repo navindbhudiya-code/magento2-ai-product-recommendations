@@ -1,0 +1,11 @@
+# PHPUnit
+.phpunit.result.cache
+.phpunit.cache/
+
+# Generated baseline/metric evidence is environment-specific; capture intentionally.
+# (Tracked evidence is committed explicitly per phase; ignore stray local dumps.)
+dev/demo/evidence/**/*.local.json
+
+# OS / editor
+.DS_Store
+*.swp
