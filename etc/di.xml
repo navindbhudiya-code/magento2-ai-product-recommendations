@@ -128,6 +128,17 @@
         <arguments>
             <argument name="logger" xsi:type="object">NavinDBhudiya\ProductRecommendation\Logger\Logger</argument>
             <argument name="llmReRanker" xsi:type="object">NavinDBhudiya\ProductRecommendation\Service\LlmReRanker</argument>
+            <!-- Phase 1: route queries through the pluggable vector store + never-empty fallback -->
+            <argument name="vectorStore" xsi:type="object">NavinDBhudiya\ProductRecommendation\Api\VectorStoreInterface</argument>
+            <argument name="columnarConverter" xsi:type="object">NavinDBhudiya\ProductRecommendation\Service\VectorStore\ColumnarConverter</argument>
+            <argument name="fallbackSelector" xsi:type="object">NavinDBhudiya\ProductRecommendation\Service\Fallback\FallbackSelector</argument>
+            <argument name="fallbackProvider" xsi:type="object">NavinDBhudiya\ProductRecommendation\Service\Fallback\FallbackProvider</argument>
+        </arguments>
+    </type>
+
+    <type name="NavinDBhudiya\ProductRecommendation\Service\Fallback\FallbackProvider">
+        <arguments>
+            <argument name="logger" xsi:type="object">NavinDBhudiya\ProductRecommendation\Logger\Logger</argument>
         </arguments>
     </type>
 

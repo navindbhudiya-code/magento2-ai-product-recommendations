@@ -31,8 +31,12 @@ use NavinDBhudiya\ProductRecommendation\Api\Data\RecommendationResultInterfaceFa
 use NavinDBhudiya\ProductRecommendation\Api\EmbeddingProviderInterface;
 use NavinDBhudiya\ProductRecommendation\Api\LlmRankingRepositoryInterface;
 use NavinDBhudiya\ProductRecommendation\Api\RecommendationServiceInterface;
+use NavinDBhudiya\ProductRecommendation\Api\VectorStoreInterface;
 use NavinDBhudiya\ProductRecommendation\Helper\Config;
 use NavinDBhudiya\ProductRecommendation\Model\Cache\Type\Recommendation as RecommendationCache;
+use NavinDBhudiya\ProductRecommendation\Service\Fallback\FallbackProvider;
+use NavinDBhudiya\ProductRecommendation\Service\Fallback\FallbackSelector;
+use NavinDBhudiya\ProductRecommendation\Service\VectorStore\ColumnarConverter;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -147,6 +151,26 @@ class RecommendationService implements RecommendationServiceInterface
     private ?DateTime $dateTime;
 
     /**
+     * @var VectorStoreInterface|null
+     */
+    private ?VectorStoreInterface $vectorStore;
+
+    /**
+     * @var ColumnarConverter|null
+     */
+    private ?ColumnarConverter $columnarConverter;
+
+    /**
+     * @var FallbackSelector|null
+     */
+    private ?FallbackSelector $fallbackSelector;
+
+    /**
+     * @var FallbackProvider|null
+     */
+    private ?FallbackProvider $fallbackProvider;
+
+    /**
      * @param ChromaClient $chromaClient
      * @param EmbeddingProviderInterface $embeddingProvider
      * @param ProductTextBuilder $textBuilder
@@ -165,6 +189,10 @@ class RecommendationService implements RecommendationServiceInterface
      * @param CustomerSession $customerSession
      * @param CheckoutSession $checkoutSession
      * @param DateTime $dateTime
+     * @param VectorStoreInterface|null $vectorStore
+     * @param ColumnarConverter|null $columnarConverter
+     * @param FallbackSelector|null $fallbackSelector
+     * @param FallbackProvider|null $fallbackProvider
      */
     public function __construct(
         ChromaClient $chromaClient,
@@ -184,7 +212,11 @@ class RecommendationService implements RecommendationServiceInterface
         ?LlmRankingInterfaceFactory $llmRankingFactory = null,
         ?CustomerSession $customerSession = null,
         ?CheckoutSession $checkoutSession = null,
-        ?DateTime $dateTime = null
+        ?DateTime $dateTime = null,
+        ?VectorStoreInterface $vectorStore = null,
+        ?ColumnarConverter $columnarConverter = null,
+        ?FallbackSelector $fallbackSelector = null,
+        ?FallbackProvider $fallbackProvider = null
     ) {
         $this->chromaClient = $chromaClient;
         $this->embeddingProvider = $embeddingProvider;
@@ -204,6 +236,10 @@ class RecommendationService implements RecommendationServiceInterface
         $this->customerSession = $customerSession;
         $this->checkoutSession = $checkoutSession;
         $this->dateTime = $dateTime;
+        $this->vectorStore = $vectorStore;
+        $this->columnarConverter = $columnarConverter;
+        $this->fallbackSelector = $fallbackSelector;
+        $this->fallbackProvider = $fallbackProvider;
     }
 
     /**
@@ -227,7 +263,8 @@ class RecommendationService implements RecommendationServiceInterface
             $results = $this->getRecommendationsWithScores($product, self::TYPE_RELATED, $limit, $storeId);
 
             $products = array_map(fn($result) => $result->getProduct(), $results);
-            
+            $products = $this->applyFallback($product, $products, self::TYPE_RELATED, $limit, $storeId);
+
             self::$isProcessing = false;
             return $products;
         } catch (\Exception $e) {
@@ -258,7 +295,8 @@ class RecommendationService implements RecommendationServiceInterface
             $results = $this->getRecommendationsWithScores($product, self::TYPE_CROSSSELL, $limit, $storeId);
 
             $products = array_map(fn($result) => $result->getProduct(), $results);
-            
+            $products = $this->applyFallback($product, $products, self::TYPE_CROSSSELL, $limit, $storeId);
+
             self::$isProcessing = false;
             return $products;
         } catch (\Exception $e) {
@@ -289,7 +327,8 @@ class RecommendationService implements RecommendationServiceInterface
             $results = $this->getRecommendationsWithScores($product, self::TYPE_UPSELL, $limit, $storeId);
 
             $products = array_map(fn($result) => $result->getProduct(), $results);
-            
+            $products = $this->applyFallback($product, $products, self::TYPE_UPSELL, $limit, $storeId);
+
             self::$isProcessing = false;
             return $products;
         } catch (\Exception $e) {
@@ -320,17 +359,9 @@ class RecommendationService implements RecommendationServiceInterface
             }
             
             $collectionName = $this->config->getCollectionName();
-            $collectionId = $this->chromaClient->getCollectionId($collectionName);
 
-            // Query ChromaDB with embeddings
-            $queryResult = $this->chromaClient->query(
-                $collectionId,
-                [], // No query_texts
-                $limit + 5,
-                [], // where
-                [], // whereDocument
-                [$queryEmbedding] // query_embeddings
-            );
+            // Query the configured vector store with embeddings
+            $queryResult = $this->queryVector($collectionName, $queryEmbedding, $limit + 5, []);
 
             return $this->processQueryResults($queryResult, $limit, $storeId);
         } catch (\Exception $e) {
@@ -439,21 +470,13 @@ class RecommendationService implements RecommendationServiceInterface
 
             // Get collection
             $collectionName = $this->config->getCollectionName();
-            $collectionId = $this->chromaClient->getCollectionId($collectionName);
 
             // Build filter
             $where = $this->buildWhereFilter($product, $type, $storeId);
 
-            // Query ChromaDB with embeddings (NOT query_texts!)
+            // Query the configured vector store (NOT query_texts!)
             $nResults = $limit + 10; // Get extra to account for filtering
-            $queryResult = $this->chromaClient->query(
-                $collectionId,
-                [], // No query_texts - we use embeddings
-                $nResults,
-                $where,
-                [], // whereDocument
-                [$queryEmbedding] // query_embeddings
-            );
+            $queryResult = $this->queryVector($collectionName, $queryEmbedding, $nResults, $where);
 
             // Process results
             $results = $this->processResults($queryResult, $product, $type, $limit, $storeId);
@@ -1068,6 +1091,84 @@ class RecommendationService implements RecommendationServiceInterface
         }
 
         return $cartProductIds;
+    }
+
+    /**
+     * Query the configured vector store, returning ChromaDB-columnar results.
+     *
+     * Uses VectorStoreInterface when wired (so the search-engine backend works while ChromaDB
+     * behaviour is preserved through its adapter); otherwise the legacy direct ChromaClient call.
+     *
+     * @param string $collection
+     * @param array $embedding
+     * @param int $nResults
+     * @param array $where
+     * @return array
+     */
+    private function queryVector(string $collection, array $embedding, int $nResults, array $where): array
+    {
+        if ($this->vectorStore !== null && $this->columnarConverter !== null) {
+            $matches = $this->vectorStore->query($collection, $embedding, $nResults, $where);
+            return $this->columnarConverter->toColumnar($matches);
+        }
+        $collectionId = $this->chromaClient->getCollectionId($collection);
+        return $this->chromaClient->query($collectionId, [], $nResults, $where, [], [$embedding]);
+    }
+
+    /**
+     * Top up a result set so the recommendation block never renders empty.
+     *
+     * Chooses the tier via FallbackSelector and logs served_by. No-op (returns input unchanged)
+     * when the fallback services are not wired.
+     *
+     * @param ProductInterface|int $product
+     * @param ProductInterface[] $products
+     * @param string $type
+     * @param int $limit
+     * @param int|null $storeId
+     * @return ProductInterface[]
+     */
+    private function applyFallback($product, array $products, string $type, int $limit, ?int $storeId): array
+    {
+        if ($this->fallbackSelector === null || $this->fallbackProvider === null) {
+            return $products;
+        }
+
+        $storeId = $storeId ?? (int) $this->storeManager->getStore()->getId();
+        $count = count($products);
+        $nativeEnabled = $this->config->isFallbackToNativeEnabled($storeId);
+
+        $decision = $this->fallbackSelector->select(
+            true,
+            $count === 0,
+            $count,
+            max(1, $limit),
+            true,
+            $nativeEnabled
+        );
+
+        if ($decision['served_by'] === FallbackSelector::SERVED_BY_PRIMARY) {
+            return $products;
+        }
+
+        $source = $this->resolveProduct($product, $storeId);
+        if ($source === null) {
+            return $products;
+        }
+
+        $excludeIds = array_map(static fn ($p) => (int) $p->getId(), $products);
+        $allowNative = $nativeEnabled || $decision['served_by'] === FallbackSelector::SERVED_BY_NATIVE;
+        $fill = $this->fallbackProvider->fill($source, $limit - $count, $excludeIds, $allowNative, $storeId);
+
+        $this->log('🛟 [FALLBACK] Block topped up to stay populated', [
+            'served_by' => $decision['served_by'],
+            'reason' => $decision['reason'],
+            'type' => $type,
+            'primary_count' => $count,
+            'filled' => count($fill),
+        ]);
+
+        return array_slice(array_merge($products, $fill), 0, $limit);
     }
 
     /**
