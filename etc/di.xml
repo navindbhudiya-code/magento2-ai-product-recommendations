@@ -190,6 +190,7 @@
                 <item name="recommendation_clear" xsi:type="object">NavinDBhudiya\ProductRecommendation\Console\Command\ClearCollection</item>
                 <item name="recommendation_refresh_profiles" xsi:type="object">NavinDBhudiya\ProductRecommendation\Console\Command\RefreshProfiles</item>
                 <item name="recommendation_refresh_trending" xsi:type="object">NavinDBhudiya\ProductRecommendation\Console\Command\RefreshTrending</item>
+                <item name="recommendation_demo_baseline" xsi:type="object">NavinDBhudiya\ProductRecommendation\Console\Command\Baseline</item>
             </argument>
         </arguments>
     </type>
