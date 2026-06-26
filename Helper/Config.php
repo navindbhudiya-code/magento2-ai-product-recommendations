@@ -72,6 +72,13 @@ class Config extends AbstractHelper
     private const XML_PATH_LLM_TEMPERATURE = 'product_recommendation/llm_reranking/temperature';
     private const XML_PATH_LLM_CANDIDATE_COUNT = 'product_recommendation/llm_reranking/candidate_count';
 
+    // Vector store backend (Phase 1)
+    private const XML_PATH_VECTOR_BACKEND = 'product_recommendation/vector_store/backend';
+    private const XML_PATH_SEARCH_HOST = 'product_recommendation/vector_store/search_host';
+    private const XML_PATH_SEARCH_PORT = 'product_recommendation/vector_store/search_port';
+    private const XML_PATH_SEARCH_SCHEME = 'product_recommendation/vector_store/search_scheme';
+    private const XML_PATH_SEARCH_INDEX_PREFIX = 'product_recommendation/vector_store/index_prefix';
+
     /**
      * @var EncryptorInterface
      */
@@ -162,6 +169,56 @@ class Config extends AbstractHelper
     public function getEmbeddingProvider(): string
     {
         return (string) $this->scopeConfig->getValue(self::XML_PATH_EMBEDDING_PROVIDER) ?: 'chromadb';
+    }
+
+    /**
+     * Get the configured vector-store backend (chromadb | search_engine).
+     *
+     * @return string
+     */
+    public function getVectorStoreBackend(): string
+    {
+        return (string) $this->scopeConfig->getValue(self::XML_PATH_VECTOR_BACKEND) ?: 'chromadb';
+    }
+
+    /**
+     * Get the OpenSearch/Elasticsearch host for the search-engine vector store.
+     *
+     * @return string
+     */
+    public function getSearchHost(): string
+    {
+        return (string) $this->scopeConfig->getValue(self::XML_PATH_SEARCH_HOST) ?: 'opensearch';
+    }
+
+    /**
+     * Get the search-engine port.
+     *
+     * @return int
+     */
+    public function getSearchPort(): int
+    {
+        return (int) ($this->scopeConfig->getValue(self::XML_PATH_SEARCH_PORT) ?: 9200);
+    }
+
+    /**
+     * Get the search-engine scheme (http | https).
+     *
+     * @return string
+     */
+    public function getSearchScheme(): string
+    {
+        return (string) $this->scopeConfig->getValue(self::XML_PATH_SEARCH_SCHEME) ?: 'http';
+    }
+
+    /**
+     * Get the index-name prefix for per-store-view vector indexes.
+     *
+     * @return string
+     */
+    public function getSearchIndexPrefix(): string
+    {
+        return (string) $this->scopeConfig->getValue(self::XML_PATH_SEARCH_INDEX_PREFIX) ?: 'navin_reco';
     }
 
     /**
