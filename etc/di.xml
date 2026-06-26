@@ -117,6 +117,12 @@
         </arguments>
     </type>
 
+    <type name="NavinDBhudiya\ProductRecommendation\Cron\RollupStats">
+        <arguments>
+            <argument name="logger" xsi:type="object">NavinDBhudiya\ProductRecommendation\Logger\Logger</argument>
+        </arguments>
+    </type>
+
     <!-- Core Recommendation Service with LLM Re-Ranking -->
     <type name="NavinDBhudiya\ProductRecommendation\Service\RecommendationService">
         <arguments>
@@ -235,6 +241,8 @@
                 <item name="recommendation_refresh_trending" xsi:type="object">NavinDBhudiya\ProductRecommendation\Console\Command\RefreshTrending</item>
                 <item name="recommendation_demo_baseline" xsi:type="object">NavinDBhudiya\ProductRecommendation\Console\Command\Baseline</item>
                 <item name="recommendation_health" xsi:type="object">NavinDBhudiya\ProductRecommendation\Console\Command\Health</item>
+                <item name="recommendation_demo_seed_events" xsi:type="object">NavinDBhudiya\ProductRecommendation\Console\Command\SeedEvents</item>
+                <item name="recommendation_ab_report" xsi:type="object">NavinDBhudiya\ProductRecommendation\Console\Command\AbReport</item>
             </argument>
         </arguments>
     </type>

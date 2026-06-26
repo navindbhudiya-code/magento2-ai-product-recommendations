@@ -32,5 +32,10 @@
              method="execute">
             <schedule>0 4 * * *</schedule>
         </job>
+        <job name="product_recommendation_rollup_stats"
+             instance="NavinDBhudiya\ProductRecommendation\Cron\RollupStats"
+             method="execute">
+            <schedule>15 1 * * *</schedule>
+        </job>
     </group>
 </config>
