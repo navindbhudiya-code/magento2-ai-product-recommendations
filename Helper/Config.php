@@ -72,6 +72,12 @@ class Config extends AbstractHelper
     private const XML_PATH_LLM_TEMPERATURE = 'product_recommendation/llm_reranking/temperature';
     private const XML_PATH_LLM_CANDIDATE_COUNT = 'product_recommendation/llm_reranking/candidate_count';
 
+    // Hosted embedding API (Phase 1)
+    private const XML_PATH_API_EMBED_KEY = 'product_recommendation/embedding/api_key';
+    private const XML_PATH_API_EMBED_MODEL = 'product_recommendation/embedding/api_model';
+    private const XML_PATH_API_EMBED_DIMENSION = 'product_recommendation/embedding/api_dimension';
+    private const XML_PATH_API_EMBED_ENDPOINT = 'product_recommendation/embedding/api_endpoint';
+
     // Vector store backend (Phase 1)
     private const XML_PATH_VECTOR_BACKEND = 'product_recommendation/vector_store/backend';
     private const XML_PATH_SEARCH_HOST = 'product_recommendation/vector_store/search_host';
@@ -169,6 +175,51 @@ class Config extends AbstractHelper
     public function getEmbeddingProvider(): string
     {
         return (string) $this->scopeConfig->getValue(self::XML_PATH_EMBEDDING_PROVIDER) ?: 'chromadb';
+    }
+
+    /**
+     * Get the decrypted hosted-embedding API key.
+     *
+     * @return string
+     */
+    public function getApiEmbeddingKey(): string
+    {
+        $value = $this->scopeConfig->getValue(self::XML_PATH_API_EMBED_KEY);
+        if (empty($value)) {
+            return '';
+        }
+        return $this->encryptor->decrypt($value);
+    }
+
+    /**
+     * Get the hosted-embedding model id.
+     *
+     * @return string
+     */
+    public function getApiEmbeddingModel(): string
+    {
+        return (string) $this->scopeConfig->getValue(self::XML_PATH_API_EMBED_MODEL) ?: 'text-embedding-3-small';
+    }
+
+    /**
+     * Get the hosted-embedding vector dimension.
+     *
+     * @return int
+     */
+    public function getApiEmbeddingDimension(): int
+    {
+        return (int) ($this->scopeConfig->getValue(self::XML_PATH_API_EMBED_DIMENSION) ?: 1536);
+    }
+
+    /**
+     * Get the hosted-embedding API endpoint.
+     *
+     * @return string
+     */
+    public function getApiEmbeddingEndpoint(): string
+    {
+        return (string) $this->scopeConfig->getValue(self::XML_PATH_API_EMBED_ENDPOINT)
+            ?: 'https://api.openai.com/v1/embeddings';
     }
 
     /**

@@ -31,7 +31,19 @@
                 <provider>chromadb</provider>
                 <product_attributes>name,short_description,description,meta_keywords</product_attributes>
                 <include_categories>1</include_categories>
+                <api_model>text-embedding-3-small</api_model>
+                <api_dimension>1536</api_dimension>
+                <api_endpoint>https://api.openai.com/v1/embeddings</api_endpoint>
             </embedding>
+
+            <!-- Vector Store (Phase 1) -->
+            <vector_store>
+                <backend>chromadb</backend>
+                <search_host>opensearch</search_host>
+                <search_port>9200</search_port>
+                <search_scheme>http</search_scheme>
+                <index_prefix>navin_reco</index_prefix>
+            </vector_store>
 
             <!-- Recommendation Settings -->
             <recommendation>

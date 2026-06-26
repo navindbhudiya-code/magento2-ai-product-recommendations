@@ -22,6 +22,8 @@
     <exclude-pattern>*/dev/demo/*</exclude-pattern>
     <exclude-pattern>*/view/*</exclude-pattern>
     <exclude-pattern>*/.phpunit.cache/*</exclude-pattern>
+    <!-- Test-only stub file defining a foreign-namespace class for mocking. -->
+    <exclude-pattern>*/Test/Unit/bootstrap.php</exclude-pattern>
 
     <rule ref="Magento2"/>
 </ruleset>

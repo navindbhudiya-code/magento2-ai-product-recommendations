@@ -84,7 +84,37 @@
                        showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Embedding Provider</label>
                     <source_model>NavinDBhudiya\ProductRecommendation\Model\Config\Source\EmbeddingProvider</source_model>
-                    <comment>Embedding provider: ChromaDB with all-MiniLM-L6-v2 model (384 dimensions)</comment>
+                    <comment>ChromaDB embedding-service (384-dim) or a hosted API (recommended, no extra infra).</comment>
+                </field>
+
+                <field id="api_key" translate="label comment" type="obscure" sortOrder="20"
+                       showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Hosted API Key</label>
+                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                    <comment>API key for the hosted embeddings provider (stored encrypted).</comment>
+                    <depends><field id="provider">api</field></depends>
+                </field>
+
+                <field id="api_model" translate="label comment" type="text" sortOrder="30"
+                       showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Hosted API Model</label>
+                    <comment>e.g. text-embedding-3-small (OpenAI), voyage-3 (Voyage).</comment>
+                    <depends><field id="provider">api</field></depends>
+                </field>
+
+                <field id="api_dimension" translate="label comment" type="text" sortOrder="35"
+                       showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Hosted API Dimension</label>
+                    <comment>Vector dimension (e.g. 1536). Must match the vector-store index.</comment>
+                    <validate>validate-digits</validate>
+                    <depends><field id="provider">api</field></depends>
+                </field>
+
+                <field id="api_endpoint" translate="label comment" type="text" sortOrder="40"
+                       showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Hosted API Endpoint</label>
+                    <comment>OpenAI-compatible endpoint. Default: https://api.openai.com/v1/embeddings</comment>
+                    <depends><field id="provider">api</field></depends>
                 </field>
 
                 <!-- Product Attributes for Embedding -->
@@ -101,6 +131,45 @@
                     <label>Include Category Names</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment>Include product category names in embedding text</comment>
+                </field>
+            </group>
+
+            <!-- Vector Store (Phase 1) -->
+            <group id="vector_store" translate="label" sortOrder="35"
+                   showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>Vector Store</label>
+
+                <field id="backend" translate="label comment" type="select" sortOrder="10"
+                       showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Vector Store Backend</label>
+                    <source_model>NavinDBhudiya\ProductRecommendation\Model\Config\Source\VectorStoreBackend</source_model>
+                    <comment>ChromaDB (existing) or the search engine (OpenSearch/ES k-NN, zero extra infra).</comment>
+                </field>
+
+                <field id="search_host" translate="label" type="text" sortOrder="20"
+                       showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Search Engine Host</label>
+                    <depends><field id="backend">search_engine</field></depends>
+                </field>
+
+                <field id="search_port" translate="label" type="text" sortOrder="30"
+                       showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Search Engine Port</label>
+                    <validate>validate-digits</validate>
+                    <depends><field id="backend">search_engine</field></depends>
+                </field>
+
+                <field id="search_scheme" translate="label" type="text" sortOrder="40"
+                       showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Search Engine Scheme (http/https)</label>
+                    <depends><field id="backend">search_engine</field></depends>
+                </field>
+
+                <field id="index_prefix" translate="label comment" type="text" sortOrder="50"
+                       showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Index Prefix</label>
+                    <comment>Per-store-view indexes are named &lt;prefix&gt;_&lt;storeId&gt;.</comment>
+                    <depends><field id="backend">search_engine</field></depends>
                 </field>
             </group>
 

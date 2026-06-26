@@ -15,9 +15,9 @@ namespace NavinDBhudiya\ProductRecommendation\Model\Config\Source;
 use Magento\Framework\Data\OptionSourceInterface;
 
 /**
- * Embedding provider options
+ * Vector-store backend options (Phase 1).
  */
-class EmbeddingProvider implements OptionSourceInterface
+class VectorStoreBackend implements OptionSourceInterface
 {
     /**
      * @inheritDoc
@@ -27,11 +27,11 @@ class EmbeddingProvider implements OptionSourceInterface
         return [
             [
                 'value' => 'chromadb',
-                'label' => __('ChromaDB embedding-service (all-MiniLM-L6-v2, 384-dim)')
+                'label' => __('ChromaDB (existing)')
             ],
             [
-                'value' => 'api',
-                'label' => __('Hosted API (OpenAI/Voyage, e.g. text-embedding-3-small)')
+                'value' => 'search_engine',
+                'label' => __('Search Engine (OpenSearch/Elasticsearch k-NN — no extra infra)')
             ],
         ];
     }

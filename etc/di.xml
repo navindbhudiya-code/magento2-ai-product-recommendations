@@ -43,11 +43,29 @@
     <preference for="NavinDBhudiya\ProductRecommendation\Api\LlmRankingRepositoryInterface"
                 type="NavinDBhudiya\ProductRecommendation\Model\LlmRankingRepository"/>
 
+    <!-- Phase 1: vector store contract resolves to the configured backend -->
+    <preference for="NavinDBhudiya\ProductRecommendation\Api\VectorStoreInterface"
+                type="NavinDBhudiya\ProductRecommendation\Service\VectorStore\VectorStoreFactory"/>
+
+    <preference for="NavinDBhudiya\ProductRecommendation\Service\VectorStore\Transport\SearchTransportInterface"
+                type="NavinDBhudiya\ProductRecommendation\Service\VectorStore\Transport\GuzzleSearchTransport"/>
+
     <!-- Embedding Provider Pool -->
     <type name="NavinDBhudiya\ProductRecommendation\Service\Embedding\EmbeddingProviderFactory">
         <arguments>
             <argument name="providers" xsi:type="array">
                 <item name="chromadb" xsi:type="string">NavinDBhudiya\ProductRecommendation\Service\Embedding\ChromaDBEmbeddingProvider</item>
+                <item name="api" xsi:type="string">NavinDBhudiya\ProductRecommendation\Service\Embedding\ApiEmbeddingProvider</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <!-- Vector Store Backend Pool -->
+    <type name="NavinDBhudiya\ProductRecommendation\Service\VectorStore\VectorStoreFactory">
+        <arguments>
+            <argument name="backends" xsi:type="array">
+                <item name="chromadb" xsi:type="string">NavinDBhudiya\ProductRecommendation\Service\VectorStore\ChromaVectorStore</item>
+                <item name="search_engine" xsi:type="string">NavinDBhudiya\ProductRecommendation\Service\VectorStore\SearchEngineVectorStore</item>
             </argument>
         </arguments>
     </type>
@@ -69,6 +87,31 @@
 
     <!-- Inject Logger -->
     <type name="NavinDBhudiya\ProductRecommendation\Service\ChromaClient">
+        <arguments>
+            <argument name="logger" xsi:type="object">NavinDBhudiya\ProductRecommendation\Logger\Logger</argument>
+        </arguments>
+    </type>
+
+    <!-- Phase 1: vector store + hosted embedding logger injection -->
+    <type name="NavinDBhudiya\ProductRecommendation\Service\VectorStore\ChromaVectorStore">
+        <arguments>
+            <argument name="logger" xsi:type="object">NavinDBhudiya\ProductRecommendation\Logger\Logger</argument>
+        </arguments>
+    </type>
+
+    <type name="NavinDBhudiya\ProductRecommendation\Service\VectorStore\SearchEngineVectorStore">
+        <arguments>
+            <argument name="logger" xsi:type="object">NavinDBhudiya\ProductRecommendation\Logger\Logger</argument>
+        </arguments>
+    </type>
+
+    <type name="NavinDBhudiya\ProductRecommendation\Service\VectorStore\Transport\GuzzleSearchTransport">
+        <arguments>
+            <argument name="logger" xsi:type="object">NavinDBhudiya\ProductRecommendation\Logger\Logger</argument>
+        </arguments>
+    </type>
+
+    <type name="NavinDBhudiya\ProductRecommendation\Service\Embedding\ApiEmbeddingProvider">
         <arguments>
             <argument name="logger" xsi:type="object">NavinDBhudiya\ProductRecommendation\Logger\Logger</argument>
         </arguments>
