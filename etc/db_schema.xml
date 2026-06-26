@@ -168,4 +168,62 @@
                     referenceTable="store" referenceColumn="store_id" onDelete="CASCADE"/>
     </table>
 
+    <!-- Phase 2: Recommendation interaction events -->
+    <table name="navindbhudiya_reco_event" resource="default" engine="innodb"
+           comment="Recommendation interaction events (impression/click/add_to_cart/purchase)">
+        <column xsi:type="bigint" name="event_id" unsigned="true" nullable="false" identity="true" comment="Event ID"/>
+        <column xsi:type="varchar" name="slot" nullable="false" length="32" default="related" comment="Slot: related/crosssell/upsell"/>
+        <column xsi:type="int" name="product_id" unsigned="true" nullable="true" comment="Anchor product ID"/>
+        <column xsi:type="int" name="recommended_id" unsigned="true" nullable="true" comment="Recommended product ID"/>
+        <column xsi:type="varchar" name="event_type" nullable="false" length="20" comment="impression|click|add_to_cart|purchase"/>
+        <column xsi:type="varchar" name="session_id" nullable="true" length="64" comment="Session id (hashed)"/>
+        <column xsi:type="smallint" name="store_id" unsigned="true" nullable="false" default="0" comment="Store ID"/>
+        <column xsi:type="varchar" name="variant" nullable="false" length="16" default="ai" comment="A/B variant: ai|control"/>
+        <column xsi:type="decimal" name="revenue" scale="4" precision="20" nullable="false" default="0" comment="Attributed revenue"/>
+        <column xsi:type="boolean" name="is_demo" nullable="false" default="false" comment="Synthetic demo row"/>
+        <column xsi:type="timestamp" name="created_at" nullable="false" default="CURRENT_TIMESTAMP" comment="Created at"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="event_id"/>
+        </constraint>
+        <index referenceId="NAVINDBHUDIYA_RECO_EVENT_SESSION_ID" indexType="btree">
+            <column name="session_id"/>
+        </index>
+        <index referenceId="NAVINDBHUDIYA_RECO_EVENT_TYPE_STORE_VARIANT" indexType="btree">
+            <column name="event_type"/>
+            <column name="store_id"/>
+            <column name="variant"/>
+        </index>
+        <index referenceId="NAVINDBHUDIYA_RECO_EVENT_CREATED_AT" indexType="btree">
+            <column name="created_at"/>
+        </index>
+        <index referenceId="NAVINDBHUDIYA_RECO_EVENT_IS_DEMO" indexType="btree">
+            <column name="is_demo"/>
+        </index>
+    </table>
+
+    <!-- Phase 2: Daily roll-ups per slot/variant -->
+    <table name="navindbhudiya_reco_stats_daily" resource="default" engine="innodb"
+           comment="Daily recommendation stats per slot/variant">
+        <column xsi:type="int" name="stat_id" unsigned="true" nullable="false" identity="true" comment="Stat ID"/>
+        <column xsi:type="date" name="stat_date" nullable="false" comment="Day"/>
+        <column xsi:type="varchar" name="slot" nullable="false" length="32" default="related" comment="Slot"/>
+        <column xsi:type="smallint" name="store_id" unsigned="true" nullable="false" default="0" comment="Store ID"/>
+        <column xsi:type="varchar" name="variant" nullable="false" length="16" default="ai" comment="Variant"/>
+        <column xsi:type="int" name="impressions" unsigned="true" nullable="false" default="0" comment="Impressions"/>
+        <column xsi:type="int" name="clicks" unsigned="true" nullable="false" default="0" comment="Clicks"/>
+        <column xsi:type="int" name="add_to_carts" unsigned="true" nullable="false" default="0" comment="Add to carts"/>
+        <column xsi:type="int" name="purchases" unsigned="true" nullable="false" default="0" comment="Purchases"/>
+        <column xsi:type="decimal" name="revenue" scale="4" precision="20" nullable="false" default="0" comment="Attributed revenue"/>
+        <column xsi:type="boolean" name="is_demo" nullable="false" default="false" comment="Contains synthetic data"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="stat_id"/>
+        </constraint>
+        <constraint xsi:type="unique" referenceId="NAVINDBHUDIYA_RECO_STATS_DATE_SLOT_STORE_VARIANT">
+            <column name="stat_date"/>
+            <column name="slot"/>
+            <column name="store_id"/>
+            <column name="variant"/>
+        </constraint>
+    </table>
+
 </schema>

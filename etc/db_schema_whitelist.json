@@ -158,5 +158,49 @@
             "FK_08206623352D8E8E2037AC4A675883E5": true,
             "FK_B484786B5401BE46E49005A1196BB413": true
         }
+    },
+    "navindbhudiya_reco_event": {
+        "column": {
+            "event_id": true,
+            "slot": true,
+            "product_id": true,
+            "recommended_id": true,
+            "event_type": true,
+            "session_id": true,
+            "store_id": true,
+            "variant": true,
+            "revenue": true,
+            "is_demo": true,
+            "created_at": true
+        },
+        "index": {
+            "NAVINDBHUDIYA_RECO_EVENT_SESSION_ID": true,
+            "NAVINDBHUDIYA_RECO_EVENT_TYPE_STORE_VARIANT": true,
+            "NAVINDBHUDIYA_RECO_EVENT_CREATED_AT": true,
+            "NAVINDBHUDIYA_RECO_EVENT_IS_DEMO": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "navindbhudiya_reco_stats_daily": {
+        "column": {
+            "stat_id": true,
+            "stat_date": true,
+            "slot": true,
+            "store_id": true,
+            "variant": true,
+            "impressions": true,
+            "clicks": true,
+            "add_to_carts": true,
+            "purchases": true,
+            "revenue": true,
+            "is_demo": true
+        },
+        "index": [],
+        "constraint": {
+            "PRIMARY": true,
+            "NAVINDBHUDIYA_RECO_STATS_DATE_SLOT_STORE_VARIANT": true
+        }
     }
 }
