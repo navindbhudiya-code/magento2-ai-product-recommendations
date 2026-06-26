@@ -4,7 +4,7 @@
  * NavinDBhudiya ProductRecommendation
  *
  * PHP_CodeSniffer configuration using the Magento2 coding standard.
- * Run: bash dev/demo/run-tests.sh --phpcs   (or composer phpcs)
+ * Run via: composer phpcs   (or the run-tests.sh phpcs mode)
  *
  * @license MIT License
  */

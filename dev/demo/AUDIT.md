@@ -79,10 +79,13 @@ Use `dev/demo/run-tests.sh`. With it, the suite runs green.
 `magento/magento-coding-standard` (Magento2 ruleset) — see `phpcs.xml` and `composer phpcs`.
 
 **Recorded debt (baseline, do NOT fix in Phase 0):**
-`A TOTAL OF 17 ERRORS AND 122 WARNINGS WERE FOUND IN 37 FILES` — 46 auto-fixable via `phpcbf`.
-Heaviest files: `Service/LlmReRanker.php` (18), `Service/DiversityFilter.php` (10),
-`Service/RecommendationExplainer.php` (9), `Service/TrendingBooster.php` (9). Captured with
-`bash dev/demo/run-tests.sh --phpcs` on PHP 8.4.10. Cleanup is deferred to Phase 3 (CI gate).
+Under the project ruleset `phpcs.xml` (excludes `view/`, `dev/demo/`, `docker/`):
+`A TOTAL OF 12 ERRORS AND 111 WARNINGS WERE FOUND IN 36 FILES`.
+(A raw `--standard=Magento2` scan of the whole tree reports 17 errors / 122 warnings / 37 files.)
+Heaviest files: `Service/LlmReRanker.php`, `Service/DiversityFilter.php`,
+`Service/RecommendationExplainer.php`, `Service/TrendingBooster.php`. Captured with
+`bash dev/demo/run-tests.sh --phpcs` on PHP 8.4.10. New Phase 0 code is phpcs-clean.
+Cleanup of the legacy debt is deferred to Phase 3 (CI gate).
 
 ## Baseline metrics (Phase 0.5)
 
