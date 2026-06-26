@@ -6,6 +6,9 @@
 # (Tracked evidence is committed explicitly per phase; ignore stray local dumps.)
 dev/demo/evidence/**/*.local.json
 
+# Local AI-assistant guidance — kept updated in the working tree but never committed.
+CLAUDE.md
+
 # OS / editor
 .DS_Store
 *.swp
