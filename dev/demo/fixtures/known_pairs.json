@@ -1,0 +1,26 @@
+{
+  "_about": "Hand-curated ground-truth pairs for measuring recommendation QUALITY (not synthetic traffic). Each pair asserts: 'when a shopper views anchor_sku, expected_sku is a sensible related/cross-sell suggestion.' Used by `recommendation:demo:baseline` to compute hit-rate@10.",
+  "_catalog": "Magento Luma sample data (bin/magento sampledata:deploy). SKUs follow the standard Luma scheme: 24-MB*/24-WB* bags, 24-WG*/24-UG* fitness gear, 24-MG* watches, MH* hoodies.",
+  "_usage": "The baseline command resolves each SKU in the active catalog. SKUs that do not resolve are REPORTED as 'unresolved' and excluded from the denominator — they are never counted as misses, so the metric stays honest if a catalog subset differs.",
+  "_metric": "hit@10 = expected_sku appears within the top-10 recommendations returned for anchor_sku.",
+  "pairs": [
+    { "anchor_sku": "24-WG085", "anchor_name": "Sprite Yoga Strap 6 foot", "expected_sku": "24-WG084", "expected_name": "Sprite Foam Yoga Brick", "relationship": "complementary", "rationale": "Yoga props used together in the same practice." },
+    { "anchor_sku": "24-WG084", "anchor_name": "Sprite Foam Yoga Brick", "expected_sku": "24-WG085", "expected_name": "Sprite Yoga Strap 6 foot", "relationship": "complementary", "rationale": "Strap and brick are the two core yoga support props." },
+    { "anchor_sku": "24-WG080", "anchor_name": "Sprite Yoga Companion Kit", "expected_sku": "24-WB01", "expected_name": "Voyage Yoga Bag", "relationship": "cross-sell", "rationale": "A yoga kit needs a bag to carry it." },
+    { "anchor_sku": "24-WB01", "anchor_name": "Voyage Yoga Bag", "expected_sku": "24-WG085", "expected_name": "Sprite Yoga Strap 6 foot", "relationship": "cross-sell", "rationale": "A yoga bag carries yoga gear such as a strap." },
+    { "anchor_sku": "24-WG088", "anchor_name": "Sprite Foam Roller", "expected_sku": "24-WG080", "expected_name": "Sprite Yoga Companion Kit", "relationship": "complementary", "rationale": "Recovery and mobility tools bought by the same yoga/fitness shopper." },
+    { "anchor_sku": "24-WG080", "anchor_name": "Sprite Yoga Companion Kit", "expected_sku": "24-WG084", "expected_name": "Sprite Foam Yoga Brick", "relationship": "complementary", "rationale": "Kit buyers frequently add an extra brick." },
+    { "anchor_sku": "24-MB01", "anchor_name": "Joust Duffle Bag", "expected_sku": "24-MB04", "expected_name": "Strive Shoulder Pack", "relationship": "similar", "rationale": "Both are gym/sport carry bags." },
+    { "anchor_sku": "24-MB04", "anchor_name": "Strive Shoulder Pack", "expected_sku": "24-MB01", "expected_name": "Joust Duffle Bag", "relationship": "similar", "rationale": "Shoulder pack and duffle appeal to the same gym shopper." },
+    { "anchor_sku": "24-MB03", "anchor_name": "Crown Summit Backpack", "expected_sku": "24-MB02", "expected_name": "Fusion Backpack", "relationship": "similar", "rationale": "Two backpacks in the same category." },
+    { "anchor_sku": "24-MB02", "anchor_name": "Fusion Backpack", "expected_sku": "24-MB03", "expected_name": "Crown Summit Backpack", "relationship": "similar", "rationale": "Two backpacks in the same category." },
+    { "anchor_sku": "24-MB05", "anchor_name": "Wayfarer Messenger Bag", "expected_sku": "24-MB06", "expected_name": "Rival Field Messenger", "relationship": "similar", "rationale": "Both are messenger bags." },
+    { "anchor_sku": "24-WB03", "anchor_name": "Driven Backpack", "expected_sku": "24-WB06", "expected_name": "Endeavor Daytrip Backpack", "relationship": "similar", "rationale": "Two women's backpacks." },
+    { "anchor_sku": "24-WB06", "anchor_name": "Endeavor Daytrip Backpack", "expected_sku": "24-WB03", "expected_name": "Driven Backpack", "relationship": "similar", "rationale": "Two women's backpacks." },
+    { "anchor_sku": "24-WB05", "anchor_name": "Savvy Shoulder Tote", "expected_sku": "24-WB02", "expected_name": "Compete Track Tote", "relationship": "similar", "rationale": "Two women's totes." },
+    { "anchor_sku": "24-MG03", "anchor_name": "Summit Watch", "expected_sku": "24-MG04", "expected_name": "Cruise Dual Analog Watch", "relationship": "similar", "rationale": "Both are men's sport watches." },
+    { "anchor_sku": "24-MG04", "anchor_name": "Cruise Dual Analog Watch", "expected_sku": "24-MG05", "expected_name": "Clamber Watch", "relationship": "similar", "rationale": "Both are men's sport watches." },
+    { "anchor_sku": "MH01", "anchor_name": "Chaz Kangeroo Hoodie", "expected_sku": "MH02", "expected_name": "Bruno Compete Hoodie", "relationship": "similar", "rationale": "Two men's hoodies in the same range." },
+    { "anchor_sku": "MH02", "anchor_name": "Bruno Compete Hoodie", "expected_sku": "MH01", "expected_name": "Chaz Kangeroo Hoodie", "relationship": "similar", "rationale": "Two men's hoodies in the same range." }
+  ]
+}
